@@ -1,25 +1,42 @@
-// const geocode = require('./utils/geocode')
-// const forcast = require('./utils/forcast')
-
+const path = require('path')
 const express = require('express')
-
-console.log(__dirname)
-console.log(__filename)
+const hbs = require('hbs')
 
 const app =express()
 
+// Define paths for express config
+const publicDirectoryPath = path.join(__dirname, '../public')
+const viewsPath = path.join(__dirname, '../templates/views')
+const partialsPath = path.join(__dirname, '../templates/partials')
+
+// Setup handlebars engine and views location
+app.set('view engine', 'hbs')
+app.set('views', viewsPath)
+hbs.registerPartials(partialsPath)
+
+// Setup static directories
+app.use(express.static(publicDirectoryPath))
+
 app.get('', (req,res)=>{
-    res.send('hello from express baby')
+    res.render('index', {
+        title: "weather app",
+        name: "Krishna Dubey"
+    })
 })
 
-app.get('/about', (req,res)=>{
-    res.send('<div><span>hello this will be he upper nav</span><br><div ')
+app.get('/about', (req, res)=>{
+    res.render('about',{
+        title: 'about me',
+        name: 'Krishna Dubey'
+    })
 })
 
-app.get('/help', (req,res) => {
-    res.send('this is the help page')
+app.get('/help', (req,res)=>{
+    res.render('help',{
+        title: 'help page',
+        name: 'krishna dubey'
+    })
 })
-
 app.get('/weather', (req,res) => {
     res.send({
         location: 'rampur',
@@ -27,6 +44,20 @@ app.get('/weather', (req,res) => {
     })
 })
 
+app.get('/help/*', (req,res)=>{
+    res.render('404',{
+        title: '404',
+        name: 'krishna dubey',
+        errorMessage: "help page not found"
+    })
+})
+app.get('*',(req,res)=>{
+    res.render('404',{
+        title: '404 page',
+        name: 'krishna dubey',
+        errorMessage: 'page doesnot exist'
+    })
+})
 
 const port = 3000
 app.listen(port, () => {
